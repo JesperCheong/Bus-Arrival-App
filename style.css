@@ -1,4 +1,66 @@
-html {
-  height: 100%;
+.item1 {
+  grid-area: title;
+  border-right: 2px dashed black;
+  /* background-color: yellow; */
+  border-top-left-radius: 2em;
+  border-bottom-left-radius: 2em;
+  position: relative;
+  font-size: 3em;
+  font-weight: 800;
+}
+.item1 span {
+  display: block;
+  text-align: left;
+  position: absolute;
+  top: -5px;
+  left: 5px;
+  font-size: 0.5em;
+  font-weight: 400;
+}
+
+.item2 {
+  grid-area: caption1;
+  border-bottom: 2px solid black;
+}
+
+.item3 {
+  grid-area: caption2;
+  border-top: 2px solid black;
+}
+
+.item4 {
+  grid-area: time1;
+}
+
+.item5 {
+  grid-area: time2;
+}
+
+.item6 {
+  grid-area: time3;
+}
+
+.item4,
+.item5,
+.item6 {
+  font-size: 2em;
+  font-weight: 600;
+}
+
+.grid-container {
+  display: grid;
   width: 100%;
+  grid-template-areas:
+    'title caption1 caption1 caption1'
+    'title time1 time2 time3'
+    'title caption2 caption2 caption2';
+  border: 3px black solid;
+  border-radius: 1em;
+  grid-template-rows: 30px 60px 30px;
+  margin-bottom: 3em;
+}
+
+.grid-container div {
+  text-align: center;
+  align-content: center;
 }
