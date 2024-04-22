@@ -1,9 +1,9 @@
-async function fetchArrivalData() {
+async function fetchArrivalData(busStopId) {
   try {
-    const response = await fetch(`https://arrivelah2.busrouter.sg/?id=83139`)
+    const response = await fetch(`https://arrivelah2.busrouter.sg/?id=${busStopId}`)
     const data = await response.json();
     console.log(data);
-    if (data.services) {
+    if (data.services && !(data.services.length === 0)) {
       busArrivalData = data.services.map(service => {
         const { no, operator, next, next2, next3 } = service || {};
         const duration_next = next ? Math.floor(next.duration_ms / 60000) : null;
@@ -19,8 +19,9 @@ async function fetchArrivalData() {
         };
       });
     } else {
-      console.log("No services data available.");
-      alert("No services data available.");
+      console.log("No service data available.");
+      alert("No service data available.");
+      busArrivalData = [];
     }
     console.log(busArrivalData);
   } catch (error) {
@@ -28,11 +29,10 @@ async function fetchArrivalData() {
     alert(error);
   }
 }
-
-async function render() {
+/* async function render() {
   await fetchArrivalData();
   renderBusInfo();
-}
+} */
 
 function renderBusInfo() {
   const busesContainer = document.getElementById("busesContainer");
@@ -74,7 +74,7 @@ function renderBusInfo() {
           break;
         case 6:
           if (bus.duration_next3 < 0) {
-            bus.duration_next = 0;
+            bus.duration_next3 = 0;
           } else if (bus.duration_next3 === null) {
             bus.duration_next3 = "-"
           }
@@ -82,7 +82,6 @@ function renderBusInfo() {
           break;
       }
       busInfoWrap.appendChild(div);
-      console.log(busInfoWrap);
     }
     busesContainer.appendChild(busInfoWrap);
 
@@ -90,5 +89,12 @@ function renderBusInfo() {
 
 }
 
+async function search() {
+  const busStopIdInput = document.getElementById("busStopIdInput").value;
+  await fetchArrivalData(busStopIdInput);
+  renderBusInfo();
+
+}
+
 let busArrivalData;
-render();
+
