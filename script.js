@@ -21,7 +21,7 @@ async function fetchArrivalData(busStopId) {
     } else {
       console.log("No service data available.");
       alert("No service data available.");
-      busArrivalData = [];
+      //busArrivalData = [];
     }
     console.log(busArrivalData);
   } catch (error) {
@@ -31,12 +31,12 @@ async function fetchArrivalData(busStopId) {
 }
 
 function renderBusInfo() {
-  spinner.classList.add("d-none");
+  
   const filterBtn = document.getElementById("filterBtn");
   filterBtn.classList.remove("d-none");
   //clear list
   while (busesContainer.firstChild) {
-      busesContainer.removeChild(busesContainer.firstChild);
+    busesContainer.removeChild(busesContainer.firstChild);
   }
   // filter list
   const hashValue = window.location.hash.substring(1);
@@ -99,7 +99,7 @@ function renderFilterList() {
   ///clear list
   const busFilter = document.getElementById("busFilter");
   while (busFilter.children.length >= 2) {
-        busFilter.removeChild(busFilter.children[1]);
+    busFilter.removeChild(busFilter.children[1]);
   }
   // grab unique bus
   const uniqueUserIds = [...new Set(busArrivalData.map(item => item.no))];
@@ -116,16 +116,19 @@ function renderFilterList() {
 }
 
 async function search() {
-  spinner.classList.remove("d-none");
+  const spinner = document.getElementById("loading-spinner");
   const busStopIdInput = document.getElementById("busStopIdInput").value;
+  spinner.classList.remove("d-none");
   await fetchArrivalData(busStopIdInput);
-  renderFilterList();
-  renderBusInfo();
-
+  spinner.classList.add("d-none");
+  if (busArrivalData) {
+    renderFilterList();
+    renderBusInfo();
+  }
 }
 
 let busArrivalData;
 const busFilterBtn = document.getElementById("busFilter");
 const busesContainer = document.getElementById("busesContainer");
-const spinner = document.getElementById("loading-spinner");
+
 window.addEventListener("hashchange", renderBusInfo);
