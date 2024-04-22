@@ -29,15 +29,22 @@ async function fetchArrivalData(busStopId) {
     alert(error);
   }
 }
-/* async function render() {
-  await fetchArrivalData();
-  renderBusInfo();
-} */
 
 function renderBusInfo() {
-  const busesContainer = document.getElementById("busesContainer");
-
-  busArrivalData.forEach((bus) => {
+  spinner.classList.add("d-none");
+  const filterBtn = document.getElementById("filterBtn");
+  filterBtn.classList.remove("d-none");
+  //clear list
+  while (busesContainer.firstChild) {
+      busesContainer.removeChild(busesContainer.firstChild);
+  }
+  // filter list
+  const hashValue = window.location.hash.substring(1);
+  const filteredList = busArrivalData.filter(bus => {
+    return (hashValue === "All" || bus.no === hashValue);
+  })
+  // render filtered list
+  filteredList.forEach((bus) => {
     const busInfoWrap = document.createElement("div")
     busInfoWrap.className = "grid-container";
     for (i = 1; i <= 6; i++) {
@@ -54,7 +61,7 @@ function renderBusInfo() {
           div.textContent = "Next bus arrives in...";
           break;
         case 3:
-          div.textContent = "min(s)";
+          div.textContent = "minute(s)";
           break;
         case 4:
           if (bus.duration_next < 0) {
@@ -88,13 +95,37 @@ function renderBusInfo() {
   });
 
 }
+function renderFilterList() {
+  ///clear list
+  const busFilter = document.getElementById("busFilter");
+  while (busFilter.children.length >= 2) {
+        busFilter.removeChild(busFilter.children[1]);
+  }
+  // grab unique bus
+  const uniqueUserIds = [...new Set(busArrivalData.map(item => item.no))];
+  // create options for filter
+  uniqueUserIds.forEach((id) => {
+    const optionList = document.createElement("li");
+    const optionLink = document.createElement("a");
+    optionLink.href = `#${id}`
+    optionLink.className = "dropdown-item";
+    optionLink.textContent = id;
+    optionList.appendChild(optionLink);
+    busFilter.appendChild(optionList);
+  })
+}
 
 async function search() {
+  spinner.classList.remove("d-none");
   const busStopIdInput = document.getElementById("busStopIdInput").value;
   await fetchArrivalData(busStopIdInput);
+  renderFilterList();
   renderBusInfo();
 
 }
 
 let busArrivalData;
-
+const busFilterBtn = document.getElementById("busFilter");
+const busesContainer = document.getElementById("busesContainer");
+const spinner = document.getElementById("loading-spinner");
+window.addEventListener("hashchange", renderBusInfo);

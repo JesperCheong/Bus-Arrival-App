@@ -22,12 +22,27 @@
       </div>
     </nav>
 
-    <div class="container col-md-6 col-lg-4">
-      <div class="input-group flex-nowrap py-5">
+    <div class="container col-md-6 col-lg-4 mt-5">
+      <div class="input-group flex-nowrap">
         <span class="input-group-text">Bus Stop ID</span>
         <input type="text" class="form-control" id="busStopIdInput">
-        <button type="button" class="btn btn-secondary" onclick="search()"><i class="bi bi-search"></i></button>
+        <button type="button" class="btn btn-secondary" onclick="search()"><a class="text-reset" href="#All"><i class="bi bi-search"></i></a></button>
       </div>
+    </div>
+
+    <div class="spinner-border text-secondary d-block mx-auto my-5 d-none" role="status" id="loading-spinner">
+      <span class="visually-hidden">Loading...</span>
+    </div>
+
+    <div class="btn-group d-grid justify-content-end pt-5 pb-3 container col-md-8 col-lg-5 d-none" id="filterBtn">
+      <button class="btn btn-secondary dropdown-toggle btn-sm" type="button" data-bs-toggle="dropdown"
+        aria-expanded="false">
+        <i class="bi bi-funnel pe-2"></i>Filter
+      </button>
+      <ul class="dropdown-menu" id="busFilter">
+        <li><a class="dropdown-item" href="#All">All</a></li>
+        <!-- filter list -->
+      </ul>
     </div>
 
     <div class="container col-md-8 col-lg-5" id="busesContainer">
