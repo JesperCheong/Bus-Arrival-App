@@ -1,8 +1,9 @@
-async function fetchArrivalData(busStopId) {
+async function fetchArrivalData() {
   try {
-    const response = await fetch(`https://arrivelah2.busrouter.sg/?id=${busStopId}`)
+    const busStopIdInput = document.getElementById("busStopIdInput").value;
+    const response = await fetch(`https://arrivelah2.busrouter.sg/?id=${busStopIdInput}`)
     const data = await response.json();
-    console.log(data);
+    //console.log(data);
     if (data.services && !(data.services.length === 0)) {
       busArrivalData = data.services.map(service => {
         const { no, operator, next, next2, next3 } = service || {};
@@ -18,20 +19,21 @@ async function fetchArrivalData(busStopId) {
           duration_next3
         };
       });
+      renderFilterList();
+      renderBusInfo();
     } else {
       console.log("No service data available.");
       alert("No service data available.");
-      //busArrivalData = [];
     }
-    console.log(busArrivalData);
+    //console.log(busArrivalData);
   } catch (error) {
     console.warn(error);
     alert(error);
   }
+
 }
 
 function renderBusInfo() {
-  
   const filterBtn = document.getElementById("filterBtn");
   filterBtn.classList.remove("d-none");
   //clear list
@@ -43,6 +45,8 @@ function renderBusInfo() {
   const filteredList = busArrivalData.filter(bus => {
     return (hashValue === "All" || bus.no === hashValue);
   })
+
+
   // render filtered list
   filteredList.forEach((bus) => {
     const busInfoWrap = document.createElement("div")
@@ -74,7 +78,7 @@ function renderBusInfo() {
         case 5:
           if (bus.duration_next2 < 0) {
             bus.duration_next2 = 0;
-          } else if (bus.duration_next === null) {
+          } else if (bus.duration_next2 === null) {
             bus.duration_next2 = "-"
           }
           div.textContent = bus.duration_next2;
@@ -116,19 +120,18 @@ function renderFilterList() {
 }
 
 async function search() {
+  clearInterval(displayInterval); //clear interval everytime clicked
   const spinner = document.getElementById("loading-spinner");
-  const busStopIdInput = document.getElementById("busStopIdInput").value;
   spinner.classList.remove("d-none");
   await fetchArrivalData(busStopIdInput);
   spinner.classList.add("d-none");
-  if (busArrivalData) {
-    renderFilterList();
-    renderBusInfo();
-  }
+  displayInterval = setInterval(fetchArrivalData, 60000);
 }
+
 
 let busArrivalData;
 const busFilterBtn = document.getElementById("busFilter");
 const busesContainer = document.getElementById("busesContainer");
 
 window.addEventListener("hashchange", renderBusInfo);
+let displayInterval;
